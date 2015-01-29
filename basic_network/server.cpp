@@ -127,12 +127,13 @@ namespace netproto{
 
 				LOG(trace) << link;
 
-				// Hash using std::hash repeatedly if collission. Probably could use just rand() but this handles cases where same url is submited twice better.
+				// Hash using std::hash and moving by one if collission.
+				// This manages situation where the same url is submitted fine.
 				// Two-way map would also work for that but I'll use this aproach.
 				std::string hash;
 				auto s = std::hash<std::string>()(link);
-				auto rh = std::hash<size_t>();
-				while (urls.count(s)&&urls[s]!=link) s = rh(s);
+				//auto rh = std::hash<size_t>();
+				while (urls.count(s)&&urls[s]!=link) ++s;
 
 				// Save to db, send encoded id in response.
 				LOG(trace) << "Hash: " << s;
